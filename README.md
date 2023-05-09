@@ -1,5 +1,5 @@
 # revSee
-A tool to generate the reverse complement of a DNA sequence
+A tool to generate the reverse complement of a DNA sequence file
 
 ## Requirements
 * Python 3+
