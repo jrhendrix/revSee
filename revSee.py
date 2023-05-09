@@ -17,6 +17,14 @@ import time
 from Bio import SeqIO	# Source: https://biopython.org/wiki/SeqIO
 from Bio.SeqRecord import SeqRecord
 
+def get_savename(original):
+	s = original.split('.')
+	s.pop()
+	sname = '.'.join(s)
+	savename = '_'.join((sname, 'revC'))
+
+	return savename
+
 
 def reverseC(args):
 
@@ -25,13 +33,18 @@ def reverseC(args):
 		outdir = '/'.join((args.output_path, args.output_directory))
 		if not os.path.exists(outdir):
 			os.mkdir(outdir)
-		prefix = '/'.join((outdir, args.savename))
+
+		if args.savename is not None:
+			savename = args.savename
+		else:
+			savename = get_savename(args.fasta)
+		prefix = '/'.join((outdir, savename))
 		outf = ".".join((prefix, 'fasta'))
 		f = open(outf, 'w')
 		
 	except:
-		print('ERROR: Could not configure output GFA file. Skipping...')
-		return
+		print('ERROR: Could not configure output FASTA file. Exit.')
+		exit()
 
 	for record in SeqIO.parse(args.fasta, 'fasta'):
 		s = record.seq.reverse_complement()
@@ -58,7 +71,7 @@ def main(program):
 	parent_parser.add_argument('-f', '--fasta', help='FASTA file of sequence (required)', required=True)
 	parent_parser.add_argument('-o', '--output_directory', default='reverse_complement', help='Prefix of output directory', type=str)
 	parent_parser.add_argument('-p', '--output_path', default=cwd, help='Path to output', type=str)
-	parent_parser.add_argument('-s', '--savename', default='extract', help='Prefix for output.')
+	parent_parser.add_argument('-s', '--savename', default=None, help='Prefix for output.')
 	subparsers = parent_parser.add_subparsers(help='sub-command help')
 
 	args = parent_parser.parse_args()
